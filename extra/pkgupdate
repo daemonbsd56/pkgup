@@ -1,0 +1,45 @@
+RED='\e[0;31m'      #Red
+GREEN='\e[0;32m'    #Green
+YELLOW='\e[0;33m'   #Yellow
+CRESET='\e[0m'	    #Reset color
+
+result() {
+	if [ "$upversion" = "" ]; then
+		echo -e "${RED}404${CRESET}"
+		[ -f errorlist ] && sed "/$pname/d" -i errorlist
+		echo "$pname $upversion" >> errorlist
+	elif [ "$version" = "$upversion" ]; then
+		echo -e "${GREEN}OK${CRESET} - $version"
+		[ -f outdatelist ] && sed "/$pname/d" -i outdatelist
+	else
+		echo -e "${YELLOW}outdate${CRESET} - $version => $upversion"
+		[ -f outdatelist ] && sed "/$pname/d" -i outdatelist
+		echo "$pname $upversion" >> outdatelist
+	fi
+}
+
+wgetlist() {	
+	wget -qO - $LINK | grep ${NAME}-[0-9].*${EXT} | sed "s/.*\($NAME-[0-9].*$EXT\).*/\1/"
+}
+
+pname=$(basename $0)
+pname=${pname%.*}
+
+source $(scratch path $pname)/spkgbuild &>/dev/null || { echo ":: $pname :: port not exist!"; exit 1; }
+
+if [ ${#source[@]} = 0 ]; then
+	exit 0
+fi
+
+if [ $(echo ${source[0]} | grep "::") ]; then
+	LINK=$(echo ${source[0]} | awk -F '::' '{print $2}')
+	LINK=$(dirname LINK)
+else
+	LINK=$(dirname ${source[0]})
+fi
+
+FILE=$(basename ${source[0]})
+EXT=$(echo $FILE | sed 's/.*\(\.t.*\).*/\1/')
+NAME=$(echo $FILE | sed 's/-[0-9].*//')
+
+#echo "$FILE $EXT $NAME"

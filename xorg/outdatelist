@@ -1,0 +1,12 @@
+libevdev 1.6.0
+libinput 1.12.2
+libsm 1.2.3
+libx11 1.6.7
+libxv 1.0.11
+xbacklight 1.2.2
+xdriinfo 1.0.6
+xf86-input-libinput 0.28.1
+xf86-video-vesa 2.4.0
+xkbcomp 1.4.2
+xkeyboard-config 2.25
+xorg-server 1.20.3

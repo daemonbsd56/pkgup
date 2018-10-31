@@ -1,0 +1,10 @@
+#!/bin/bash
+
+total=$(ls *.sh | wc -l)
+count=0
+
+for i in *.sh; do
+	count=$(( count + 1 ))
+	echo -ne "[ $count/$total ] "
+	./$i
+done

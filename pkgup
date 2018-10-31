@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+RED='\e[0;31m'      #Red
+GREEN='\e[0;32m'    #Green
+YELLOW='\e[0;33m'   #Yellow
+CRESET='\e[0m'	    #Reset color
+
+. spkgbuild
+
+if [ ${#source[@]} = 0 ]; then
+	exit 0
+fi
+
+if [ $(echo ${source[0]} | grep "::") ]; then
+	LINK=$(echo ${source[0]} | awk -F '::' '{print $2}')
+	LINK=$(dirname LINK)
+else
+	LINK=$(dirname ${source[0]})
+fi
+
+FILE=$(basename ${source[0]})
+EXT=${FILE##*.}
+NAME=$(echo $FILE | sed 's/-[0-9].*//')
+
+echo -ne "$NAME ($FILE)... "
+
+latest=$(wget -qO - -t 3 -T 10 $LINK | grep ${NAME}-[0-9].*${EXT} | sed "s/.*\($NAME-[0-9].*$EXT\).*/\1/" | grep -v beta | grep -v alpha | sort -V | tail -n1)
+
+if [ "$latest" = "" ]; then
+	echo -e "${RED}404${CRESET}"
+elif [ "$latest" = "$FILE" ]; then
+	echo -e "${GREEN}OK${CRESET}"
+else
+	echo -e "${YELLOW}$latest${CRESET}"
+fi
+
+exit 0

@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+. pkgupdate
+
+echo -ne "$name ... "
+
+LINK=$(dirname $LINK)
+CATEGORY=$(echo $LINK | cut -d / -f5)
+
+majversion=$(wget -qO - http://archive.xfce.org/src/$CATEGORY/$name/ | grep "DIR" | grep folder | cut -d '"' -f4 | sed 's/\///' | sort -V | tail -n1)
+upversion=$(wget -qO - $LINK/$majversion/ | grep $NAME-[0-9].*$EXT | sed "s/.*\($NAME-[0-9].*$EXT\).*/\1/" | sed "s/$NAME-//;s/.tar.bz2//" | sort -V | tail -n1)
+
+result
+
+exit 0

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+reponame=$(basename $PWD)
+
+while read dir link; do
+	case "$dir" in
+		""|\#*) continue ;;
+	esac
+	if [ "$reponame" = "$(basename $dir)" ]; then
+		for port in $(ls $dir); do
+			if [ ! -f $port.sh ]; then
+				echo "pkgup not exist: $port"
+			fi
+		done
+		for i in $(ls *.sh); do
+			i=${i%.*}
+			if [ ! -d $dir/$i ]; then
+				echo "port not exist: $i"
+			fi
+		done
+	fi
+done < /etc/scratchpkg.repo

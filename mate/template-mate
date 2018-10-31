@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+. pkgupdate
+
+materelease=1.20
+
+echo -ne "$name ... "
+
+upversion=$(wget -qO - http://pub.mate-desktop.org/releases/$materelease | grep $pname-[0-9].*xz | sed "s/.*\($pname-[0-9].*xz\).*/\1/" | sed "s/$pname-//;s/.tar.xz//" | sort -V | tail -n1)
+
+result
+
+exit 0
